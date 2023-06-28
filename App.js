@@ -135,7 +135,6 @@ function MyTabs() {
             options={{
               tabBarShowLabel: false,
               tabBarButton: (props) => <TabButton {...props} item={item} />
-              
             }}
           />
         )

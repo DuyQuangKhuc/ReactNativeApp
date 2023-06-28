@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Text,
     ImageBackground,
@@ -12,9 +12,66 @@ import { MaterialIcons } from "@expo/vector-icons";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import COLORS from '../../const/colors';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DetailsScreen = ({ navigation, route }) => {
     const pet = route.params;
+
+    const [isFavorite, setIsFavorite] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        getItemsInStorageData(pet);
+    }, [pet]);
+
+
+    const getItemsInStorageData = async (pet) => {
+        setIsLoading(true);
+        let items = await AsyncStorage.getItem("Favorites");
+        items = JSON.parse(items);
+        if (items) {
+            const isPetFavorite = items.includes(pet.id);
+            setIsFavorite(!isPetFavorite);
+        }
+        setIsLoading(false);
+    };
+
+    const addToFavorites = async (pet) => {
+        setIsLoading(true);
+        let itemsArr = await AsyncStorage.getItem("Favorites");
+        itemsArr = JSON.parse(itemsArr) || [];
+        itemsArr.push(pet.id);
+        try {
+            await AsyncStorage.setItem("Favorites", JSON.stringify(itemsArr));
+            setTimeout(() => {
+                setIsFavorite(false);
+                setIsLoading(false);
+            }, 500);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const removeFavorite = async (pet) => {
+        setIsLoading(true);
+        let itemArr = await AsyncStorage.getItem("Favorites");
+        itemArr = JSON.parse(itemArr) || [];
+        const indexToRemove = itemArr.indexOf(pet.id);
+        if (indexToRemove !== -1) {
+            itemArr.splice(indexToRemove, 1);
+            try {
+                await AsyncStorage.setItem("Favorites", JSON.stringify(itemArr));
+                setTimeout(() => {
+                    setIsFavorite(true);
+                    setIsLoading(false);
+                }, 500);
+            } catch (error) {
+                console.error(error);
+            }
+        } else {
+            setIsLoading(false);
+        }
+    };
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
             <StatusBar backgroundColor={COLORS.background} />
@@ -45,13 +102,19 @@ const DetailsScreen = ({ navigation, route }) => {
                             style={{ fontSize: 20, color: COLORS.dark, fontWeight: 'bold' }}>
                             {pet.name}
                         </Text>
-                        <TouchableOpacity>
-                            <MaterialIcons
+                        {/* <TouchableOpacity
+                            activeOpacity={0.6}
+                            onPress={() => isFavorite ? addToFavorites(pet) : removeFavorite(pet)}
+
+                        > */}
+                            {/* <MaterialIcons
                                 name="favorite"
                                 size={22}
-                                color={COLORS.grey}
-                            />
-                        </TouchableOpacity>
+                                color={isFavorite ? COLORS.grey : COLORS.red}
+                            /> */}
+                        <Icon name="gender-male" size={22} color={COLORS.grey} />
+
+                        {/* </TouchableOpacity> */}
                     </View>
 
                     {/* Render Pet type and age */}
@@ -69,7 +132,7 @@ const DetailsScreen = ({ navigation, route }) => {
                     <View style={{ marginTop: 5, flexDirection: 'row' }}>
                         <Icon name="map-marker" color={COLORS.primary} size={20} />
                         <Text style={{ fontSize: 14, color: COLORS.grey, marginLeft: 5 }}>
-                            5 Bulvarna-Kudriavska Street, Kyiv
+                            Honkai Impact 3
                         </Text>
                     </View>
                 </View>
@@ -99,7 +162,7 @@ const DetailsScreen = ({ navigation, route }) => {
                                 Owner
                             </Text>
                         </View>
-                        <Text style={{ color: COLORS.grey, fontSize: 12 }}>May 25, 2020</Text>
+                        <Text style={{ color: COLORS.grey, fontSize: 12 }}>June 29, 2023</Text>
                     </View>
                     <Text style={style.comment}>
                         My job requires moving to another country. I don't have the

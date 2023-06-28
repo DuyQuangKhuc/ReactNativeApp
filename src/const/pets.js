@@ -1,85 +1,86 @@
 
 const pets = [
     {
-        pet: 'cats',
+        pet: 'rose',
         pets: [
-            {
-                id: '1',
-                name: 'Lily',
-                image: require('../../assets/cat1.png'),
-                type: 'Chausie',
-                age: '5 years old',
-            },
-            {
-                id: '2',
-                name: 'Lucy',
-                image: require('../../assets/cat2.png'),
-                type: 'Bobtail',
-                age: '2 years old',
-            },
+            
             {
                 id: '3',
                 name: 'Nala',
                 image: require('../../assets/cat3.png'),
                 type: 'Ragamuffin',
+                age: '2 years ',
+            },
+            {
+                id: '11',
+                name: 'Lily',
+                image: require('../../assets/cat1.png'),
+                type: 'Chausie',
+                age: '5 years ',
+            },
+            {
+                id: '12',
+                name: 'Lucy',
+                image: require('../../assets/cat2.png'),
+                type: 'Bobtail',
                 age: '2 years old',
             },
         ],
     },
     {
-        pet: 'dogs',
+        pet: 'dahlia',
         pets: [
             {
-                id: '1',
+                id: '4',
                 name: 'Bally',
                 image: require('../../assets/dog1.png'),
                 type: 'German Shepherd',
-                age: '2 years old',
+                age: '2 years ',
             },
             {
-                id: '2',
+                id: '5',
                 name: 'Max',
                 image: require('../../assets/dog2.png'),
                 type: 'Foxhound',
-                age: '2 years old',
+                age: '2 years ',
             },
         ],
     },
     {
-        pet: 'birds',
+        pet: 'lavender',
         pets: [
             {
-                id: '1',
+                id: '6',
                 name: 'Coco',
                 image: require('../../assets/bird1.png'),
                 type: 'Parrot',
-                age: '2 years old',
+                age: '2 years ',
             },
             {
-                id: '2',
+                id: '7',
                 name: 'Alfie',
                 image: require('../../assets/bird2.png'),
                 type: 'Parrot',
-                age: '4 years old',
+                age: '4 years ',
             },
         ],
     },
     {
-        pet: 'bunnies',
+        pet: 'sunflower',
         pets: [
             {
-                id: '1',
+                id: '8',
                 name: 'Boots',
                 image: require('../../assets/bunny1.png'),
                 type: 'Angora',
-                age: '1 years old',
+                age: '1 years ',
             },
             {
-                id: '2',
+                id: '9',
                 name: 'Pookie',
                 image: require('../../assets/bunny2.png'),
                 type: 'Angora',
-                age: '1 years old',
+                age: '1 years ',
             },
         ],
     },

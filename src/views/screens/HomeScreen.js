@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Dimensions,
     SafeAreaView,
@@ -17,18 +17,78 @@ import COLORS from '../../const/colors';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import pets from '../../const/pets';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useIsFocused } from '@react-navigation/native';
 
 
 const { height } = Dimensions.get('window');
 const petCategories = [
-    { name: 'CATS', icon: 'cat' },
-    { name: 'DOGS', icon: 'dog' },
-    { name: 'BIRDS', icon: 'bird' },
-    { name: 'BUNNIES', icon: 'rabbit' },
+    { name: 'ROSE', icon: 'flower' },
+    { name: 'DAHLIA', icon: 'flower-outline' },
+    { name: 'LAVENDER', icon: 'flower' },
+    { name: 'SUNFLOWER', icon: 'flower-outline' },
 ];
 
 const Card = ({ pet, navigation }) => {
+    
+    // console.log('pet:', pet);
+    // const { addToFavorites, removeFavorite, isFavorite } = useFavorite();
+    
+    const [isFavorite, setIsFavorite] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
+    useEffect(() => {
+        getItemsInStorageData(pet);
+    }, [pet]);
+
+
+    const getItemsInStorageData = async (pet) => {
+        setIsLoading(true);
+        let items = await AsyncStorage.getItem("Favorites");
+        items = JSON.parse(items);
+        if (items) {
+            const isPetFavorite = items.includes(pet.id);
+            setIsFavorite(!isPetFavorite);
+        }
+        setIsLoading(false);
+    };
+
+    const addToFavorites = async (pet) => {
+        setIsLoading(true);
+        let itemsArr = await AsyncStorage.getItem("Favorites");
+        itemsArr = JSON.parse(itemsArr) || [];
+        itemsArr.push(pet.id);
+        try {
+            await AsyncStorage.setItem("Favorites", JSON.stringify(itemsArr));
+            setTimeout(() => {
+                setIsFavorite(false);
+                setIsLoading(false);
+            }, 500);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const removeFavorite = async (pet) => {
+        setIsLoading(true);
+        let itemArr = await AsyncStorage.getItem("Favorites");
+        itemArr = JSON.parse(itemArr) || [];
+        const indexToRemove = itemArr.indexOf(pet.id);
+        if (indexToRemove !== -1) {
+            itemArr.splice(indexToRemove, 1);
+            try {
+                await AsyncStorage.setItem("Favorites", JSON.stringify(itemArr));
+                setTimeout(() => {
+                    setIsFavorite(true);
+                    setIsLoading(false);
+                }, 500);
+            } catch (error) {
+                console.error(error);
+            }
+        } else {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <TouchableOpacity
@@ -56,15 +116,23 @@ const Card = ({ pet, navigation }) => {
                             {pet?.name}
                         </Text>
                         {/* <Icon name="gender-male" size={22} color={COLORS.grey} /> */}
-                        <TouchableOpacity>
+
+                        {/* favorite */}
+
+                        <TouchableOpacity
+                            activeOpacity={0.2}
+                            onPress={() => isFavorite ? addToFavorites(pet) : removeFavorite(pet)}
+
+                        >
                             <MaterialIcons
                                 name="favorite"
                                 size={22}
-                                color={COLORS.grey}
+                                color={isFavorite ? COLORS.grey : COLORS.red}
                             />
                            
+
                         </TouchableOpacity>
-                        
+
                     </View>
 
                     {/* Render the age and type */}
@@ -107,7 +175,7 @@ const HomeScreen = ({ navigation }) => {
         <SafeAreaView style={{ flex: 1, color: COLORS.white }}>
             <View style={style.header}>
                 {/* Drawer */}
-                <Icon name="sort-variant" size={28} onPress={navigation.toggleDrawer} />  
+                <Icon name="sort-variant" size={28} onPress={navigation.toggleDrawer} />
 
                 <Text style={{ color: COLORS.primary, fontWeight: 'bold', fontSize: 16 }}>
                     Elysian Realm
@@ -138,7 +206,7 @@ const HomeScreen = ({ navigation }) => {
                         <View
                             style={{
                                 flexDirection: 'row',
-                                justifyContent: 'space-between',                              
+                                justifyContent: 'space-between',
                                 marginTop: 20,
                                 paddingBottom: 20,
                             }}>
@@ -150,10 +218,10 @@ const HomeScreen = ({ navigation }) => {
                                             fliterPet(index);
                                         }}
                                         style={[
-                                            
+
                                             style.categoryBtn,
                                             {
-                                                
+
                                                 backgroundColor:
                                                     selectedCategoryIndex == index
                                                         ? COLORS.primary
@@ -218,7 +286,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 20,
-      
+
     },
     categoryBtnName: {
         color: COLORS.dark,
